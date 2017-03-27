@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -42,5 +43,46 @@ public class DepTree {
 		}
 		
 		return data;
+	}
+	
+	public static void generateDepTree(int[][] data){
+		double numI,numJ,numIJ;
+		double prIJ,prI,prJ;
+		double total;
+		double[][] vals = new double[10][10];
+		for(int i = 0; i<10;i++){
+			System.out.print("-------- ");
+			for(int j = i+1; j< 10; j++){
+				total= 0.0;
+				for(int k = 0;k<2;k++){
+					for(int l = 0;l<2;l++){
+						numI = numJ = numIJ = 0;
+						for(int m = 0;m<8000;m++){
+							if(data[m][i] == k){
+								numI++;
+							}
+							else if(data[m][j] == l){
+								numJ++;
+							}
+							if(data[m][i] == k && data[m][j] == l){
+								numIJ++;
+							}
+						}
+						prI = numI/8000;
+						prJ = numJ/8000;
+						prIJ = numIJ/8000;	
+						total+=prIJ*Math.log10(prIJ/(prI*prJ));
+					}
+				}
+				vals[i][j] = total;
+				DecimalFormat two = new DecimalFormat("0.000");
+				System.out.print(two.format(vals[i][j])+ "|" + i  + j + " ");
+			}
+			System.out.println();
+			for(int z=0;z<=i;z++){
+				System.out.print("-------- ");
+			}
+		}
+		
 	}
 }

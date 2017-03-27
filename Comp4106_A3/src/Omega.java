@@ -99,6 +99,9 @@ public class Omega{
 					System.out.print("         ");
 				}
 			}
-			
+		}
+		
+		public int[][] getData(){
+			return data;
 		}
 	}

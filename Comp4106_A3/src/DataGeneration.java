@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class DataGeneration {
 
 	private static final int[] p10 = {20, 34, 51, 77, 72, 14, 70, 40, 81, 12};
@@ -23,8 +25,26 @@ public class DataGeneration {
 		Omega w2 = new Omega(p20,p21);
 		Omega w3 = new Omega(p30,p31);
 		Omega w4 = new Omega(p40,p41);
+		
+		int[][] allData = new int[8000][10];
+		ArrayList<Omega> classes = new ArrayList<>();
+		classes.add(w1);
+		classes.add(w2);
+		classes.add(w3);
+		classes.add(w4);
+		int count = 0;
+		for(Omega o: classes){
+			for(int i=0;i<2000;i++){
+				for(int j=0;j<10;j++){
+					allData[count][j] = o.getData()[i][j];
+				}
+				count++;
+			}
+		}
+		
 		w1.printTotals();
-		w1.generateDepTree();
+		DepTree.generateDepTree(allData);
+		//w1.generateDepTree();
 		//w2.printData();
 		//w3.printData();
 		//w4.printData();
