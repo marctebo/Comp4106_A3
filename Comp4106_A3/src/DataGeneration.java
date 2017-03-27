@@ -23,7 +23,8 @@ public class DataGeneration {
 		Omega w2 = new Omega(p20,p21);
 		Omega w3 = new Omega(p30,p31);
 		Omega w4 = new Omega(p40,p41);
-		w1.printData();
+		w1.printTotals();
+		w1.generateDepTree();
 		//w2.printData();
 		//w3.printData();
 		//w4.printData();

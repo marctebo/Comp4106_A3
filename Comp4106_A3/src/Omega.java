@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.Random;
 
 public class Omega{
@@ -50,6 +51,7 @@ public class Omega{
 				System.out.println("X" + (i+1) +": " + per2 + "%");
 			}
 		}
+		
 		public void printData(){
 			for(int i=0;i<2000;i++){
 				for(int j=0;j<probs.length;j++){
@@ -58,5 +60,45 @@ public class Omega{
 				System.out.println();
 			}
 			printTotals();
+		}
+		
+		public void generateDepTree(){
+			double numI,numJ,numIJ;
+			double prIJ,prI,prJ;
+			double total;
+			double[][] vals = new double[10][10];
+			for(int i = 0; i<10;i++){
+				for(int j = i+1; j< 10; j++){
+					total= 0.0;
+					for(int k = 0;k<2;k++){
+						for(int l = 0;l<2;l++){
+							numI = numJ = numIJ = 0;
+							for(int m = 0;m<2000;m++){
+								if(data[m][i] == k){
+									numI++;
+								}
+								else if(data[m][j] == l){
+									numJ++;
+								}
+								if(data[m][i] == k && data[m][j] == l){
+									numIJ++;
+								}
+							}
+							prI = numI/2000;
+							prJ = numJ/2000;
+							prIJ = numIJ/2000;	
+							total+=prIJ*Math.log(prIJ/(prI*prJ));
+						}
+					}
+					vals[i][j] = total;
+					DecimalFormat two = new DecimalFormat("0.000");
+					System.out.print(two.format(vals[i][j])+ "|" + i  + j + " ");
+				}
+				System.out.println();
+				for(int z=0;z<=i;z++){
+					System.out.print("         ");
+				}
+			}
+			
 		}
 	}
