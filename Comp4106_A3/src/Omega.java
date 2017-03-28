@@ -1,4 +1,5 @@
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Omega{
@@ -6,6 +7,24 @@ public class Omega{
 		int[] p0,p1;
 		int[][] data;
 		DepTree tree;
+		int[][] testing;
+		public int[][] getTesting() {
+			return testing;
+		}
+
+		public void setTesting(int[][] testing) {
+			this.testing = testing;
+		}
+
+		public int[][] getTraining() {
+			return training;
+		}
+
+		public void setTraining(int[][] training) {
+			this.training = training;
+		}
+
+		int[][] training;
 		
 		public Omega(int[] probs){
 			this.probs = probs;
@@ -60,7 +79,6 @@ public class Omega{
 				}
 				System.out.println();
 			}
-			printTotals();
 		}
 		
 		public void generateDepTree(){
@@ -106,22 +124,24 @@ public class Omega{
 			return data;
 		}
 		
-		public void performCrossValidation(){
-			int[] foldStart = {0,400,800,1200,1600,2000};
-			int[][] testing,training;
-			int fold;
-			
-			for(fold = 0;fold<5;fold++){
-				testing = new int[400][10];
-				training = new int[1600][10];
-				
-				for(int i=0;i<2000;i++){
-					for(int j=0;j<10;j++){
-						if(i>= foldStart[fold] && i< foldStart[fold+1]){
-							testing[i][j] = data[i][j];
+		public void generateTT(int[] foldStart, int fold){
+			testing = new int[400][10];
+			training = new int[1600][10];
+
+			for(int i=0;i<2000;i++){
+				for(int j=0;j<10;j++){
+					if(i<foldStart[fold]){
+						training[i][j] = data[i][j];
+						}
+						else if(i>= foldStart[fold] && i< foldStart[fold+1]){
+							testing[i-(foldStart[fold])][j] = data[i][j];
+						}
+						else if(i>foldStart[fold+1]){
+							getTraining()[i-foldStart[1]][j] = data[i][j];
 						}
 					}
 				}
 			}
-		}
+			
+		
 	}

@@ -14,10 +14,38 @@ public class DataGeneration {
 	private static final int[] p40 = {05, 95, 64, 94, 87, 20, 79, 46, 73, 65};
 	private static final int[] p41 = {-1, 32, 52, 58, 23, 50, 63, 93, 40, 39};
 	
+	private static final int[] foldStart = {0,400,800,1200,1600,2000};
 	/*
 	 * Probabilities represent the chance of getting a 0
 	 */
 	
+	public void performCrossValidation(ArrayList<Omega> classes){
+		int[][] testing,training;
+		int fold;
+		
+		for(fold = 0;fold<5;fold++){
+			for(Omega o: classes){
+				testing = new int[400][10];
+				training = new int[1600][10];
+				o.setTesting(testing);
+				o.setTraining(training);
+				
+				for(int i=0;i<2000;i++){
+					for(int j=0;j<10;j++){
+						if(i<foldStart[fold]){
+							o.getTraining()[i][j] = o.getData()[i][j];
+						}
+						else if(i>= foldStart[fold] && i< foldStart[fold+1]){
+							o.getTesting()[i-(foldStart[fold])][j] = o.getData()[i][j];
+						}
+						else if(i>foldStart[fold+1]){
+							o.getTraining()[i-foldStart[1]][j] = o.getData()[i][j];
+						}
+					}
+				}
+			}
+		}
+	}
 	
 	public static void main(String args[]){
 		
@@ -41,7 +69,16 @@ public class DataGeneration {
 				count++;
 			}
 		}
-		System.out.println("Omega 1 feature rate");
+		w1.printData();
+		w1.generateTT(foldStart, 1);
+		System.out.println("\n\n");
+		for(int i=0;i<1600;i++){
+			for(int j=0;j<10;j++){
+				System.out.print(w1.getTraining()[i][j] + " ");
+			}
+			System.out.println();
+		}
+		/*System.out.println("Omega 1 feature rate");
 		w1.printTotals();
 		System.out.println("Omega 2 feature rate");
 		w2.printTotals();
@@ -50,7 +87,9 @@ public class DataGeneration {
 		System.out.println("Omega 4 feature rate");
 		w4.printTotals();
 		
-		DepTree.generateDepTree(allData);
+		DepTree.generateDepTree(allData);*/
+		
+		
 		//w1.generateDepTree();
 		//w2.printData();
 		//w3.printData();
