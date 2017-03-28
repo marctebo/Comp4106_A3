@@ -5,6 +5,7 @@ import java.util.Random;
 public class DepTree {
 	
 	private ArrayList<DepNode> tree;
+	private DepNode root;
 	public DepTree(int[] p0, int[] p1){
 		tree = new ArrayList<>();
 		for(int i = 0; i<10;i++){
@@ -19,6 +20,73 @@ public class DepTree {
 		tree.get(7).setParent(tree.get(2));
 		tree.get(8).setParent(tree.get(3));
 		tree.get(9).setParent(tree.get(5));
+	}
+	
+	public DepTree(double[][] arr){
+		int iLoc, jLoc;
+		tree = new ArrayList<>();
+		while(tree.size()<=10){
+			iLoc = 0;
+			jLoc = 0;
+			double max = 0;
+			for(int i = 1; i<10;i++){
+				for(int j=i+1;j<10;j++){
+					if(arr[i][j]>max){
+						max = arr[i][j];
+						iLoc = i;
+						jLoc = j;
+					}
+				}
+			}
+			DepNode a = new DepNode(iLoc+1);
+			DepNode b = new DepNode(jLoc+1);
+			
+			if(tree.isEmpty()){
+				a.setRoot(true);
+				root = a;
+				a.addPair(b);
+				System.out.println("\n" + a.getId() + " added pair: " + b.getId());
+				tree.add(a);
+				tree.add(b);
+			}
+			
+			else if(containsId(a.getId()) &&!containsId(b.getId())){
+				DepNode temp = getNodeId(a.getId());
+				temp.addPair(b);
+				System.out.println(a.getId() + " added pair: " + b.getId());
+				tree.add(b);
+			}
+			
+			else if(!containsId(a.getId()) && containsId(b.getId())){
+				DepNode temp = getNodeId(b.getId());
+				temp.addPair(a);
+				System.out.println(b.getId() + " added pair: " + a.getId());
+				tree.add(a);
+			}
+			
+			else if(!containsId(a.getId()) && !containsId(b.getId())){
+				a.addPair(b);
+				System.out.println(a.getId() + " added pair: " + b.getId() + "(not connected)");
+				tree.add(a);
+				tree.add(b);
+			}
+			else if(containsId(a.getId()) && containsId(b.getId())){
+				if(!getNodeId(a.getId()).connectedTo(b.getId(),0)){
+					getNodeId(a.getId()).addPair(getNodeId(b.getId()));
+					System.out.println(a.getId() + " added pair: " + b.getId());
+				}
+			}
+			arr[iLoc][jLoc] = -1;
+		}
+		System.out.println();
+		
+		for(DepNode n: tree){
+			System.out.print(n.getId()+":");
+			for(DepNode node: n.getPairs()){
+				System.out.print(" " + node.getId());
+			}
+			System.out.println();
+		}
 	}
 	
 	public int[][] generateData(){
@@ -76,7 +144,7 @@ public class DepTree {
 				}
 				vals[i][j] = total;
 				DecimalFormat two = new DecimalFormat("0.000");
-				System.out.print(two.format(vals[i][j])+ "|" + i  + j + " ");
+				System.out.print(two.format(vals[i][j])+ "|" + i + j + " ");
 			}
 			System.out.println();
 			for(int z=0;z<=i;z++){
@@ -84,5 +152,24 @@ public class DepTree {
 			}
 		}
 		
+		DepTree t = new DepTree(vals);
+	}
+	
+	public boolean containsId(int id){
+		for(DepNode node: tree){
+			if(node.getId() == id){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public DepNode getNodeId(int id){
+		for(DepNode node: tree){
+			if(node.getId() == id){
+				return node;
+			}
+		}
+		return null;
 	}
 }
