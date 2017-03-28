@@ -25,6 +25,7 @@ public class DepTree {
 	public DepTree(double[][] arr){
 		int iLoc, jLoc;
 		tree = new ArrayList<>();
+		System.out.print("\nOrder of Connections");
 		while(tree.size()<10){
 			iLoc = 0;
 			jLoc = 0;
@@ -134,6 +135,7 @@ public class DepTree {
 		double prIJ,prI,prJ;
 		double total;
 		double[][] vals = new double[10][10];
+		System.out.println("\nStrengths between Nodes");
 		for(int i = 0; i<10;i++){
 			System.out.print("-------- ");
 			for(int j = i+1; j< 10; j++){
@@ -167,7 +169,7 @@ public class DepTree {
 				System.out.print("-------- ");
 			}
 		}
-		
+		System.out.println();
 		DepTree t = new DepTree(vals);
 	}
 	

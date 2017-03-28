@@ -41,8 +41,15 @@ public class DataGeneration {
 				count++;
 			}
 		}
-		
+		System.out.println("Omega 1 feature rate");
 		w1.printTotals();
+		System.out.println("Omega 2 feature rate");
+		w2.printTotals();
+		System.out.println("Omega 3 feature rate");
+		w3.printTotals();
+		System.out.println("Omega 4 feature rate");
+		w4.printTotals();
+		
 		DepTree.generateDepTree(allData);
 		//w1.generateDepTree();
 		//w2.printData();

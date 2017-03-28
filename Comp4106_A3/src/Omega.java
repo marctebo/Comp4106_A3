@@ -50,6 +50,7 @@ public class Omega{
 				double per2 = per1/2000;
 				System.out.println("X" + (i+1) +": " + per2 + "%");
 			}
+			System.out.println();
 		}
 		
 		public void printData(){
@@ -103,5 +104,24 @@ public class Omega{
 		
 		public int[][] getData(){
 			return data;
+		}
+		
+		public void performCrossValidation(){
+			int[] foldStart = {0,400,800,1200,1600,2000};
+			int[][] testing,training;
+			int fold;
+			
+			for(fold = 0;fold<5;fold++){
+				testing = new int[400][10];
+				training = new int[1600][10];
+				
+				for(int i=0;i<2000;i++){
+					for(int j=0;j<10;j++){
+						if(i>= foldStart[fold] && i< foldStart[fold+1]){
+							testing[i][j] = data[i][j];
+						}
+					}
+				}
+			}
 		}
 	}
