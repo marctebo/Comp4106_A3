@@ -25,6 +25,9 @@ public class DepNode {
 				}
 				if(!node.getPairs().isEmpty()){
 					b = node.connectedTo(id,this.getId());
+					if(b){
+						return true;
+					}
 				}
 			}
 		}

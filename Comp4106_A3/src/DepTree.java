@@ -25,11 +25,11 @@ public class DepTree {
 	public DepTree(double[][] arr){
 		int iLoc, jLoc;
 		tree = new ArrayList<>();
-		while(tree.size()<=10){
+		while(tree.size()<10){
 			iLoc = 0;
 			jLoc = 0;
 			double max = 0;
-			for(int i = 1; i<10;i++){
+			for(int i = 0; i<10;i++){
 				for(int j=i+1;j<10;j++){
 					if(arr[i][j]>max){
 						max = arr[i][j];
@@ -66,7 +66,7 @@ public class DepTree {
 			
 			else if(!containsId(a.getId()) && !containsId(b.getId())){
 				a.addPair(b);
-				System.out.println(a.getId() + " added pair: " + b.getId() + "(not connected)");
+				System.out.println(a.getId() + " added pair: " + b.getId() + "(not connected to root)");
 				tree.add(a);
 				tree.add(b);
 			}
@@ -80,12 +80,28 @@ public class DepTree {
 		}
 		System.out.println();
 		
+		ArrayList<Integer> nums = new ArrayList<>();
+		ArrayList<Integer> extras = new ArrayList<>();
+		nums.add(tree.get(0).getId());
+		
+		System.out.println("DEPENDENCY TREE");
 		for(DepNode n: tree){
-			System.out.print(n.getId()+":");
-			for(DepNode node: n.getPairs()){
-				System.out.print(" " + node.getId());
-			}
-			System.out.println();
+			extras.add(n.getId());
+			if(nums.contains(n.getId())){
+				extras.remove((Integer)n.getId());
+				System.out.print("Node "+n.getId()+" is connected to:");
+				for(DepNode node: n.getPairs()){
+					if(node.getId()!=n.getId() && node.getId()!= nums.get(0) && !nums.contains(node.getId())){
+						System.out.print(" " + node.getId());
+						nums.add(new Integer(node.getId()));
+					}
+				}	
+				System.out.println();
+				nums.add(new Integer(n.getId()));
+			}	
+		}
+		for(Integer i: extras){
+			System.out.println("Node " +i+" is connected to:");
 		}
 	}
 	
