@@ -61,6 +61,21 @@ public class Omega{
 			}
 			return totals;
 		}
+		public double[] countTraining(){
+			int[] totals = new int[10];
+			for(int j = 0;j<10;j++){
+				for(int i=0;i<1600;i++){
+					if(training[i][j]==0){
+						totals[j]++;
+					}
+				}
+			}
+			double[] per = new double[10];
+			for(int i=0;i<10;i++){
+				per[i] = totals[i]/1600.0;
+			}
+			return per;
+		}
 		
 		public void printTotals(){
 			int[] temp = countData();

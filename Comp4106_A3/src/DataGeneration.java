@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class DataGeneration {
@@ -19,33 +20,63 @@ public class DataGeneration {
 	 * Probabilities represent the chance of getting a 0
 	 */
 	
-	public void performCrossValidation(ArrayList<Omega> classes){
-		int[][] testing,training;
+	public static void performCrossValidation(ArrayList<Omega> classes){
+		System.out.println("\nIndependent 5-fold");
 		int fold;
-		
+		ArrayList<double[]> wProb;
+		DecimalFormat two = new DecimalFormat("0.0000");
+		double[] averages = new double[5];
 		for(fold = 0;fold<5;fold++){
+			wProb = new ArrayList<>();
 			for(Omega o: classes){
-				testing = new int[400][10];
-				training = new int[1600][10];
-				o.setTesting(testing);
-				o.setTraining(training);
-				
-				for(int i=0;i<2000;i++){
+				o.generateTT(foldStart, fold);
+				wProb.add(o.countTraining());			
+			}
+			int count = 0;
+			double rollingAverage=0.0;
+			for(Omega o: classes){
+				int sum = 0;
+				for(int i=0;i<400;i++){
+					double[] probs = {1.0,1.0,1.0,1.0};
 					for(int j=0;j<10;j++){
-						if(i<foldStart[fold]){
-							o.getTraining()[i][j] = o.getData()[i][j];
+						if(o.getTesting()[i][j] ==0){
+							probs[0]*=wProb.get(0)[j];
+							probs[1]*=wProb.get(1)[j];
+							probs[2]*=wProb.get(2)[j];
+							probs[3]*=wProb.get(3)[j];
 						}
-						else if(i>= foldStart[fold] && i< foldStart[fold+1]){
-							o.getTesting()[i-(foldStart[fold])][j] = o.getData()[i][j];
-						}
-						else if(i>foldStart[fold+1]){
-							o.getTraining()[i-foldStart[1]][j] = o.getData()[i][j];
+						else{
+							probs[0]*=1-wProb.get(0)[j];
+							probs[1]*=1-wProb.get(1)[j];
+							probs[2]*=1-wProb.get(2)[j];
+							probs[3]*=1-wProb.get(3)[j];
 						}
 					}
+					double max = probs[0];
+					for(int k=1;i<4;i++){
+						if(probs[k]>max){
+							max = probs[k];
+						}
+					}
+					if(probs[count] == max){
+						sum++;
+					}
+					
 				}
+				rollingAverage+=sum/400.0;
+				count++;
 			}
+			averages[fold] = rollingAverage/4.0;
+			System.out.println("Fold " + (fold+1) + " Accuracy: " + two.format(averages[fold]) +"%");
 		}
+		double totalAverage = 0.0;
+		for(int z=0;z<5;z++){
+			totalAverage+=averages[0];
+		}
+		System.out.println("Average for all folds: "+ two.format(totalAverage/5.0)+"%");
+
 	}
+
 	
 	public static void main(String args[]){
 		
@@ -69,16 +100,17 @@ public class DataGeneration {
 				count++;
 			}
 		}
-		w1.printData();
-		w1.generateTT(foldStart, 1);
-		System.out.println("\n\n");
-		for(int i=0;i<1600;i++){
+		/*w1.printData();
+		w1.generateTT(foldStart, 4);
+		System.out.println("\n\n\n\n\n");
+		for(int i=0;i<400;i++){
 			for(int j=0;j<10;j++){
-				System.out.print(w1.getTraining()[i][j] + " ");
+				System.out.print(w1.getTesting()[i][j] + " ");
 			}
 			System.out.println();
 		}
-		/*System.out.println("Omega 1 feature rate");
+		*/
+		System.out.println("Omega 1 feature rate");
 		w1.printTotals();
 		System.out.println("Omega 2 feature rate");
 		w2.printTotals();
@@ -87,7 +119,8 @@ public class DataGeneration {
 		System.out.println("Omega 4 feature rate");
 		w4.printTotals();
 		
-		DepTree.generateDepTree(allData);*/
+		DepTree.generateDepTree(allData);
+		performCrossValidation(classes);
 		
 		
 		//w1.generateDepTree();
