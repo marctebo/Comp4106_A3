@@ -46,14 +46,14 @@ public class DataGeneration {
 							probs[3]*=wProb.get(3)[j];
 						}
 						else{
-							probs[0]*=1-wProb.get(0)[j];
-							probs[1]*=1-wProb.get(1)[j];
-							probs[2]*=1-wProb.get(2)[j];
-							probs[3]*=1-wProb.get(3)[j];
+							probs[0]*=(1.0-wProb.get(0)[j]);
+							probs[1]*=(1.0-wProb.get(1)[j]);
+							probs[2]*=(1.0-wProb.get(2)[j]);
+							probs[3]*=(1.0-wProb.get(3)[j]);
 						}
 					}
 					double max = probs[0];
-					for(int k=1;i<4;i++){
+					for(int k=1;k<4;k++){
 						if(probs[k]>max){
 							max = probs[k];
 						}
@@ -61,7 +61,6 @@ public class DataGeneration {
 					if(probs[count] == max){
 						sum++;
 					}
-					
 				}
 				rollingAverage+=sum/400.0;
 				count++;
