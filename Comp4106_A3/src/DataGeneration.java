@@ -20,11 +20,11 @@ public class DataGeneration {
 	 * Probabilities represent the chance of getting a 0
 	 */
 	
-	public static void performCrossValidation(ArrayList<Omega> classes){
+	public static void crossValidationIndependent(ArrayList<Omega> classes){
 		System.out.println("\nIndependent 5-fold");
 		int fold;
 		ArrayList<double[]> wProb;
-		DecimalFormat two = new DecimalFormat("0.0000");
+		DecimalFormat two = new DecimalFormat("0.00");
 		double[] averages = new double[5];
 		for(fold = 0;fold<5;fold++){
 			wProb = new ArrayList<>();
@@ -66,16 +66,91 @@ public class DataGeneration {
 				count++;
 			}
 			averages[fold] = rollingAverage/4.0;
-			System.out.println("Fold " + (fold+1) + " Accuracy: " + two.format(averages[fold]) +"%");
+			System.out.println("Fold " + (fold+1) + " Accuracy: " + two.format(100.0*averages[fold]) +"%");
 		}
 		double totalAverage = 0.0;
 		for(int z=0;z<5;z++){
 			totalAverage+=averages[0];
 		}
-		System.out.println("Average for all folds: "+ two.format(totalAverage/5.0)+"%");
+		System.out.println("Average for all folds: "+ two.format(100.0*totalAverage/5.0)+"%");
 
 	}
 
+	public static void crossValidationDependent(ArrayList<Omega> classes, DepTree tree){
+		System.out.println("\nDependent 5-fold");
+		int fold;
+		ArrayList<double[][]> wProb;
+		DecimalFormat two = new DecimalFormat("0.00");
+		double[] averages = new double[5];
+		for(fold = 0;fold<5;fold++){
+			wProb = new ArrayList<>();
+			for(Omega o: classes){
+				o.generateTT(foldStart, fold);
+				wProb.add(o.countTrainingDependent(tree));			
+			}
+			int count = 0;
+			double rollingAverage=0.0;
+			for(Omega o: classes){
+				int sum = 0;
+				for(int i=0;i<400;i++){
+					double[] probs = {1.0,1.0,1.0,1.0};
+					for(int j=0;j<10;j++){
+						if(tree.getNodeId(j+1).isRoot()){
+							probs[0]*=wProb.get(0)[0][j];
+							probs[1]*=wProb.get(1)[0][j];
+							probs[2]*=wProb.get(2)[0][j];
+							probs[3]*=wProb.get(3)[0][j];
+						}
+						else{
+							int k = tree.getNodeId(j+1).getParent().getId()-1;
+							if(o.getTesting()[i][j] == 0 && o.getTesting()[i][k] == 0){
+								probs[0]*=wProb.get(0)[0][j];
+								probs[1]*=wProb.get(1)[0][j];
+								probs[2]*=wProb.get(2)[0][j];
+								probs[3]*=wProb.get(3)[0][j];
+							}
+							else if(o.getTesting()[i][j] == 0 && o.getTesting()[i][k] == 1){
+								probs[0]*=wProb.get(0)[1][j];
+								probs[1]*=wProb.get(1)[1][j];
+								probs[2]*=wProb.get(2)[1][j];
+								probs[3]*=wProb.get(3)[1][j];
+							}
+							else if(o.getTesting()[i][j] == 1 && o.getTesting()[i][k] == 0){
+								probs[0]*=(1.0-wProb.get(0)[0][j]);
+								probs[1]*=(1.0-wProb.get(1)[0][j]);
+								probs[2]*=(1.0-wProb.get(2)[0][j]);
+								probs[3]*=(1.0-wProb.get(3)[0][j]);
+							}
+							else if(o.getTesting()[i][j] == 1 && o.getTesting()[i][k] == 1){
+								probs[0]*=(1.0-wProb.get(0)[1][j]);
+								probs[1]*=(1.0-wProb.get(1)[1][j]);
+								probs[2]*=(1.0-wProb.get(2)[1][j]);
+								probs[3]*=(1.0-wProb.get(3)[1][j]);
+							}
+						}
+					}
+					double max = probs[0];
+					for(int k=1;k<4;k++){
+						if(probs[k]>max){
+							max = probs[k];
+						}
+					}
+					if(probs[count] == max){
+						sum++;
+					}
+				}
+				rollingAverage+=sum/400.0;
+				count++;
+			}
+			averages[fold] = rollingAverage/4.0;
+			System.out.println("Fold " + (fold+1) + " Accuracy: " + two.format(100.0*averages[fold]) +"%");
+		}
+		double totalAverage = 0.0;
+		for(int z=0;z<5;z++){
+			totalAverage+=averages[0];
+		}
+		System.out.println("Average for all folds: "+ two.format(100.0*totalAverage/5.0)+"%");
+	}
 	
 	public static void main(String args[]){
 		
@@ -118,9 +193,9 @@ public class DataGeneration {
 		System.out.println("Omega 4 feature rate");
 		w4.printTotals();
 		
-		DepTree.generateDepTree(allData);
-		performCrossValidation(classes);
-		
+		DepTree estimatedTree = DepTree.generateDepTree(allData);
+		crossValidationIndependent(classes);
+		crossValidationDependent(classes, estimatedTree);
 		
 		//w1.generateDepTree();
 		//w2.printData();

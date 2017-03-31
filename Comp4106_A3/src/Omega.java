@@ -158,5 +158,37 @@ public class Omega{
 				}
 			}
 			
-		
+		public double[][] countTrainingDependent(DepTree tree){
+			double[][] prob = new double[2][10];
+			int count;
+			for(DepNode node: tree.getTree()){
+				count = 0;
+				if(node.isRoot()){
+					for(int i = 0; i<1600;i++){
+						if(training[i][node.getId()-1] == 0){
+							count++;
+						}
+					}
+					prob[0][node.getId()-1] = count/1600.0;
+					prob[1][node.getId()-1] = count/1600.0;
+				}
+				
+				else{
+					int cP0 = 0;
+					int cP1 = 0;
+					for(int i = 0; i<1600;i++){
+						if(training[i][node.getId()-1] == 0 && training[i][node.getParent().getId()-1]==0){
+							cP0++;
+						}
+						else if(training[i][node.getId()-1] == 0 && training[i][node.getParent().getId()-1]==1){
+							cP1++;
+						}
+					}
+					prob[0][node.getId()-1] = cP0/1600.0;
+					prob[1][node.getId()-1] = cP1/1600.0;
+				}
+			}
+			return prob;
+			
+		}
 	}

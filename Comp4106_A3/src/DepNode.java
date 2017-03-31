@@ -9,11 +9,19 @@ public class DepNode {
 	private int p1;
 	private boolean root;
 	private ArrayList<DepNode> pairs;
+	private ArrayList<DepNode> children;
 	
 	public DepNode(DepNode parent, int p0, int p1){
 		this.parent = parent;
 		this.p0 = p0;
 		this.p1 = p1;
+	}
+	
+	public DepNode(int id){
+		this.id = id;
+		root = false;
+		pairs = new ArrayList<DepNode>();
+		children = new ArrayList<DepNode>();
 	}
 	
 	public boolean connectedTo(int id, int pairId){
@@ -43,12 +51,20 @@ public class DepNode {
 		this.id = id;
 	}
 
-	public DepNode(int id){
-		this.id = id;
-		root = false;
-		pairs = new ArrayList<DepNode>();
+	public void addChild(DepNode node){
+		if(!node.equals(parent)&&!node.isRoot()){
+			children.add(node);
+			node.setParent(this);
+		}
 	}
-	
+	public ArrayList<DepNode> getChildren() {
+		return children;
+	}
+
+	public void setChildren(ArrayList<DepNode> children) {
+		this.children = children;
+	}
+
 	public void addPair(DepNode node){
 		if(!pairs.contains(node)){
 			pairs.add(node);
