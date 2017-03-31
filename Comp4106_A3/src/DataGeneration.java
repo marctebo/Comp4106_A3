@@ -24,7 +24,7 @@ public class DataGeneration {
 		System.out.println("\nIndependent 5-fold");
 		int fold;
 		ArrayList<double[]> wProb;
-		DecimalFormat two = new DecimalFormat("0.00");
+		DecimalFormat three = new DecimalFormat("0.000");
 		double[] averages = new double[5];
 		for(fold = 0;fold<5;fold++){
 			wProb = new ArrayList<>();
@@ -66,13 +66,13 @@ public class DataGeneration {
 				count++;
 			}
 			averages[fold] = rollingAverage/4.0;
-			System.out.println("Fold " + (fold+1) + " Accuracy: " + two.format(100.0*averages[fold]) +"%");
+			System.out.println("Fold " + (fold+1) + " Accuracy: " + three.format(100.0*averages[fold]) +"%");
 		}
 		double totalAverage = 0.0;
 		for(int z=0;z<5;z++){
 			totalAverage+=averages[0];
 		}
-		System.out.println("Average for all folds: "+ two.format(100.0*totalAverage/5.0)+"%");
+		System.out.println("Average for all folds: "+ three.format(100.0*totalAverage/5.0)+"%");
 
 	}
 
@@ -80,7 +80,7 @@ public class DataGeneration {
 		System.out.println("\nDependent 5-fold");
 		int fold;
 		ArrayList<double[][]> wProb;
-		DecimalFormat two = new DecimalFormat("0.00");
+		DecimalFormat three = new DecimalFormat("0.000");
 		double[] averages = new double[5];
 		for(fold = 0;fold<5;fold++){
 			wProb = new ArrayList<>();
@@ -143,13 +143,13 @@ public class DataGeneration {
 				count++;
 			}
 			averages[fold] = rollingAverage/4.0;
-			System.out.println("Fold " + (fold+1) + " Accuracy: " + two.format(100.0*averages[fold]) +"%");
+			System.out.println("Fold " + (fold+1) + " Accuracy: " + three.format(100.0*averages[fold]) +"%");
 		}
 		double totalAverage = 0.0;
 		for(int z=0;z<5;z++){
 			totalAverage+=averages[0];
 		}
-		System.out.println("Average for all folds: "+ two.format(100.0*totalAverage/5.0)+"%");
+		System.out.println("Average for all folds: "+ three.format(100.0*totalAverage/5.0)+"%");
 	}
 	
 	public static void main(String args[]){

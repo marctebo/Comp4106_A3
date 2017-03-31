@@ -162,8 +162,8 @@ public class Omega{
 			double[][] prob = new double[2][10];
 			int count;
 			for(DepNode node: tree.getTree()){
-				count = 0;
 				if(node.isRoot()){
+					count = 0;
 					for(int i = 0; i<1600;i++){
 						if(training[i][node.getId()-1] == 0){
 							count++;
@@ -176,7 +176,15 @@ public class Omega{
 				else{
 					int cP0 = 0;
 					int cP1 = 0;
+					int nP0 = 0;
+					int nP1 = 0;
 					for(int i = 0; i<1600;i++){
+						if(training[i][node.getParent().getId()-1]==0){
+							nP0++;
+						}
+						if(training[i][node.getParent().getId()-1]==1){
+							nP1++;
+						}
 						if(training[i][node.getId()-1] == 0 && training[i][node.getParent().getId()-1]==0){
 							cP0++;
 						}
@@ -184,8 +192,8 @@ public class Omega{
 							cP1++;
 						}
 					}
-					prob[0][node.getId()-1] = cP0/1600.0;
-					prob[1][node.getId()-1] = cP1/1600.0;
+					prob[0][node.getId()-1] = cP0/nP0;
+					prob[1][node.getId()-1] = cP1/nP1;
 				}
 			}
 			return prob;
