@@ -1,5 +1,10 @@
+import java.awt.List;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class DataGeneration {
 
@@ -70,7 +75,7 @@ public class DataGeneration {
 		}
 		double totalAverage = 0.0;
 		for(int z=0;z<5;z++){
-			totalAverage+=averages[0];
+			totalAverage+=averages[z];
 		}
 		System.out.println("Average for all folds: "+ three.format(100.0*totalAverage/5.0)+"%");
 
@@ -147,9 +152,56 @@ public class DataGeneration {
 		}
 		double totalAverage = 0.0;
 		for(int z=0;z<5;z++){
-			totalAverage+=averages[0];
+			totalAverage+=averages[z];
 		}
 		System.out.println("Average for all folds: "+ three.format(100.0*totalAverage/5.0)+"%");
+	}
+	
+	public static ArrayList<double[]> parseWine(){
+        String fileName= "wine.csv";
+        File file= new File(fileName);
+
+        // this gives you a 2-dimensional array of strings
+        ArrayList<double[]> lines = new ArrayList<double[]>();
+        Scanner inputStream;
+
+        try{
+            inputStream = new Scanner(file);
+
+            while(inputStream.hasNext()){
+                String line= inputStream.next();
+                String[] values = line.split(",");
+                double[] doubVal = new double[values.length];
+                for(int i=0;i<doubVal.length;i++){
+                	doubVal[i] = Double.parseDouble(values[i]);
+                }
+                // this adds the currently parsed line to the 2-dimensional string array
+                lines.add(doubVal);
+            }
+
+            inputStream.close();
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return lines;
+	}
+	
+	public static double[] getWineProb(ArrayList<double[]> wineVal){
+		double[] prob = new double[14];
+		
+		for(int i=1;i<prob.length;i++){
+			double sum = 0.0;
+			int entries = 0;
+			for(double[] d: wineVal){
+				sum+=d[i];
+				entries++;
+			}
+			
+			prob[i] = sum/entries;
+			
+		}
+		return prob;
 	}
 	
 	public static void main(String args[]){
@@ -197,6 +249,12 @@ public class DataGeneration {
 		crossValidationIndependent(classes);
 		crossValidationDependent(classes, estimatedTree);
 		
+		ArrayList<double[]> wineVal = parseWine();
+		double[] probs = getWineProb(wineVal);
+			for(int i = 0;i<probs.length;i++){
+				System.out.print(probs[i] + " ");
+			}
+			System.out.println();
 		//w1.generateDepTree();
 		//w2.printData();
 		//w3.printData();

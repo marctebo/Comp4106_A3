@@ -111,7 +111,7 @@ public class Omega{
 								if(data[m][i] == k){
 									numI++;
 								}
-								else if(data[m][j] == l){
+								if(data[m][j] == l){
 									numJ++;
 								}
 								if(data[m][i] == k && data[m][j] == l){
