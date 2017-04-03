@@ -402,16 +402,6 @@ public class DataGeneration {
 		int[][] totalData = collectWineData(wineClasses);
 		DepTree.generateWineDepTree(totalData);
 		
-		//wineClasses.get(0).generateWineTT(wineStart1, 4);
-		for(int i =0;i<wineClasses.get(0).size;i++){
-			for(int j=0;j<14;j++){
-				System.out.print(wineClasses.get(0).getWineData()[i][j] + " ");
-			}
-			System.out.println();
-		}
-		
-		System.out.println("\n\n");
-		
 		crossValidationIndependentWine(wineClasses);
 		//w1.generateDepTree();
 		//w2.printData();

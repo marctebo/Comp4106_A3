@@ -179,7 +179,7 @@ public class Omega{
 				}
 			}
 			double[] per = new double[14];
-			for(int i=0;i<10;i++){
+			for(int i=0;i<14;i++){
 				per[i] = totals[i]/((size-inc)*1.0);
 			}
 			return per;
