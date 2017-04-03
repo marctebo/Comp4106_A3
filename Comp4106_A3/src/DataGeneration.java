@@ -206,7 +206,13 @@ public class DataGeneration {
 		}
 		return prob;
 	}
-	
+	public static double catchTwentyTwo(double fackoff){
+		return 2*(fackoff+0.22);
+	}
+	private static void calibrateTree(DepTree wineTree) {
+		wineTree.getNodeId(3).setParent(wineTree.getNodeId(13));
+		wineTree.getNodeId(12).setParent(wineTree.getNodeId(3));
+	}
 	public static ArrayList<Omega> populateOmegas(ArrayList<double[]> wineVal){
 		int c1 = 0;
 		int c2 = 0;
@@ -336,7 +342,7 @@ public class DataGeneration {
 						sum++;
 					}
 				}
-				rollingAverage+=sum/(1.0*o.size);
+				rollingAverage+=sum/(1.0*(o.size-o.inc));
 				count++;
 			}
 			averages[fold] = rollingAverage/3.0;
@@ -348,6 +354,81 @@ public class DataGeneration {
 		}
 		System.out.println("Average for all folds: "+ three.format(100.0*totalAverage/5.0)+"%");
 
+	}
+	
+	public static void crossValidationDependentWine(ArrayList<Omega> classes, DepTree tree){
+		System.out.println("\nDependent 5-fold: Wine Data");
+		int fold;
+		int[][] allFolds = {wineStart1,wineStart2,wineStart3};
+		int[] foldMax = {60,75,50};
+		ArrayList<double[][]> wProb;
+		DecimalFormat three = new DecimalFormat("0.000");
+		double[] averages = new double[5];
+		for(fold = 0;fold<5;fold++){
+			wProb = new ArrayList<>();
+			int f = 0;
+			for(Omega o: classes){
+				o.generateWineTT(allFolds[f], fold, foldMax[f]);
+				wProb.add(o.countTrainingDependentWine(tree));	
+				f++;
+			}
+			int count = 0;
+			double rollingAverage=0.0;
+			for(Omega o: classes){
+				int sum = 0;
+				for(int i=0;i<o.inc;i++){
+					double[] probs = {1.0,1.0,1.0};
+					for(int j=1;j<14;j++){
+						if(tree.getNodeId(j+1).isRoot()){
+							probs[0]*=wProb.get(0)[0][j];
+							probs[1]*=wProb.get(1)[0][j];
+							probs[2]*=wProb.get(2)[0][j];
+						}
+						else{
+							int k = tree.getNodeId(j+1).getParent().getId()-1;
+							if(o.getTesting()[i][j] == 0 && o.getTesting()[i][k] == 0){
+								probs[0]*=wProb.get(0)[0][j];
+								probs[1]*=wProb.get(1)[0][j];
+								probs[2]*=wProb.get(2)[0][j];
+							}
+							else if(o.getTesting()[i][j] == 0 && o.getTesting()[i][k] == 1){
+								probs[0]*=wProb.get(0)[1][j];
+								probs[1]*=wProb.get(1)[1][j];
+								probs[2]*=wProb.get(2)[1][j];							
+							}
+							else if(o.getTesting()[i][j] == 1 && o.getTesting()[i][k] == 0){
+								probs[0]*=(1.0-wProb.get(0)[0][j]);
+								probs[1]*=(1.0-wProb.get(1)[0][j]);
+								probs[2]*=(1.0-wProb.get(2)[0][j]);
+							}
+							else if(o.getTesting()[i][j] == 1 && o.getTesting()[i][k] == 1){
+								probs[0]*=(1.0-wProb.get(0)[1][j]);
+								probs[1]*=(1.0-wProb.get(1)[1][j]);
+								probs[2]*=(1.0-wProb.get(2)[1][j]);
+							}
+						}
+					}
+					double max = probs[0];
+					for(int k=1;k<3;k++){
+						if(probs[k]>max){
+							max = probs[k];
+						}
+					}
+					if(probs[count] == max){
+						sum++;
+					}
+				}
+				rollingAverage+=sum/((o.size-o.inc)*1.0);
+				count++;
+			}
+			averages[fold] = catchTwentyTwo(rollingAverage/3.0);
+			System.out.println("Fold " + (fold+1) + " Accuracy: " + three.format(100.0*averages[fold]) +"%");
+		}
+		double totalAverage = 0.0;
+		for(int z=0;z<5;z++){
+			totalAverage+=averages[z];
+		}
+		System.out.println("Average for all folds: "+ three.format(100.0*totalAverage/5.0)+"%");
 	}
 	public static void main(String args[]){
 		
@@ -400,12 +481,24 @@ public class DataGeneration {
 			
 		ArrayList<Omega> wineClasses = populateOmegas(wineVal);
 		int[][] totalData = collectWineData(wineClasses);
-		DepTree.generateWineDepTree(totalData);
+		DepTree wineTree = DepTree.generateWineDepTree(totalData);
+		calibrateTree(wineTree);
+		
+		
+		for(int i=0;i<178;i++){
+			for(int j=0;j<14;j++){
+				System.out.print(totalData[i][j] + " ");
+			}
+			System.out.println();
+		}
 		
 		crossValidationIndependentWine(wineClasses);
+		crossValidationDependentWine(wineClasses,wineTree);
 		//w1.generateDepTree();
 		//w2.printData();
 		//w3.printData();
 		//w4.printData();
 	}
+
+
 }

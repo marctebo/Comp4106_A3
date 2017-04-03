@@ -226,6 +226,62 @@ public class Omega{
 			
 		}
 		
+		public double[][] countTrainingDependentWine(DepTree tree){
+			double[][] prob = new double[2][14];
+			int count;
+			for(DepNode node: tree.getTree()){
+				if(node.isRoot()||node.getParent()==null){
+					count = 0;
+					for(int i = 0; i<size-inc;i++){
+						if(training[i][node.getId()-1] == 0){
+							count++;
+						}
+					}
+					prob[0][node.getId()-1] = count/((size-inc)*1.0);
+					prob[1][node.getId()-1] = count/((size-inc)*1.0);
+				}
+				
+				else{
+					int cP0 = 0;
+					int cP1 = 0;
+					int nP0 = 0;
+					int nP1 = 0;
+					for(int i = 0; i<size-inc;i++){
+						if(training[i][node.getParent().getId()-1]==0){
+							nP0++;
+						}
+						if(training[i][node.getParent().getId()-1]==1){
+							nP1++;
+						}
+						if(training[i][node.getId()-1] == 0 && training[i][node.getParent().getId()-1]==0){
+							cP0++;
+						}
+						else if(training[i][node.getId()-1] == 0 && training[i][node.getParent().getId()-1]==1){
+							cP1++;
+						}
+					}
+					if(nP0==0){
+						prob[0][node.getId()-1] = 0.5;
+					}
+					else if(nP1==0){
+						prob[1][node.getId()-1] = 0.5;
+					}
+					else if(cP0 ==0){
+						prob[0][node.getId()-1] = 0.5;
+					}
+					else if(cP1 ==0){
+						prob[1][node.getId()-1] = 0.5;
+					}
+					else{
+						prob[0][node.getId()-1] = cP0/nP0;
+						prob[1][node.getId()-1] = cP1/nP1;
+					}
+				}
+			}
+			return prob;
+			
+		}
+		
 		public int[][] getWineData() {
 			return wineData;
 		}
