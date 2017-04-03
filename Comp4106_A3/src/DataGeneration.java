@@ -204,6 +204,91 @@ public class DataGeneration {
 		return prob;
 	}
 	
+	public static ArrayList<Omega> populateOmegas(ArrayList<double[]> wineVal){
+		int c1 = 0;
+		int c2 = 0;
+		int c3 = 0;
+		int[][] data1,data2,data3;
+		double[] prob = getWineProb(wineVal);
+		
+		for(double[] d: wineVal){
+			if(d[0] == 1){
+				c1++;
+			}
+			else if(d[0] == 2){
+				c2++;
+			}
+			else if(d[0] == 3){
+				c3++;
+			}
+		}
+		
+		data1 = new int[c1][14];
+		data2 = new int[c2][14];
+		data3 = new int[c3][14];
+		int count = 0;
+		for(double[] d: wineVal){	
+			for(int i=1;i<14;i++){
+				if(count<c1){
+					if(d[i]>prob[i]){
+						data1[count][i] = 1;
+					}
+					else{
+						data1[count][i] = 0;
+					}
+					
+				}
+				else if(count>=c1 && count<(c1+c2)){
+					if(d[i]>prob[i]){
+						data2[count-c1][i] = 1;
+					}
+					else{
+						data2[count-c1][i] = 0;
+					}
+				}
+				else{
+					if(d[i]>prob[i]){
+						data3[count-c1-c2][i] = 1;
+					}
+					else{
+						data3[count-c1-c2][i] = 0;
+					}
+				}
+			}
+			count++;
+		}
+		System.out.println(c1 + "  " + c2 + "  " + c3);
+		
+		Omega w1 = new Omega(data1,c1);
+		Omega w2 = new Omega(data2,c2);
+		Omega w3 = new Omega(data3,c3);
+		ArrayList<Omega> o = new ArrayList<>();
+		o.add(w1);
+		o.add(w2);
+		o.add(w3);
+		
+		return o;
+	}
+	
+	public static int[][] collectWineData(ArrayList<Omega> classes){
+		int[][] wineData = new int[178][14];
+		
+		for(int i=0;i<178;i++){
+			for(int j=0;j<14;j++){
+				if(i<59){
+					wineData[i][j] = classes.get(0).getWineData()[i][j];
+				}
+				else if(i>=59 &&i<130){
+					wineData[i][j] = classes.get(1).getWineData()[i-59][j];
+				}
+				else{
+					wineData[i][j] = classes.get(2).getWineData()[i-130][j];
+				}
+			}
+		}
+		return wineData;
+	}
+	
 	public static void main(String args[]){
 		
 		Omega w1 = new Omega(p10,p11);
@@ -249,12 +334,13 @@ public class DataGeneration {
 		crossValidationIndependent(classes);
 		crossValidationDependent(classes, estimatedTree);
 		
+		System.out.println("\nWINE DATA ANALYSIS");
 		ArrayList<double[]> wineVal = parseWine();
 		double[] probs = getWineProb(wineVal);
-			for(int i = 0;i<probs.length;i++){
-				System.out.print(probs[i] + " ");
-			}
-			System.out.println();
+			
+		ArrayList<Omega> wineClasses = populateOmegas(wineVal);
+		int[][] totalData = collectWineData(wineClasses);
+		DepTree.generateWineDepTree(totalData);
 		//w1.generateDepTree();
 		//w2.printData();
 		//w3.printData();

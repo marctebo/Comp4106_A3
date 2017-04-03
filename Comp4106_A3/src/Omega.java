@@ -6,24 +6,10 @@ public class Omega{
 		int[] probs = new int[10];
 		int[] p0,p1;
 		int[][] data;
+		int[][] wineData;
+		int size;
 		DepTree tree;
 		int[][] testing;
-		public int[][] getTesting() {
-			return testing;
-		}
-
-		public void setTesting(int[][] testing) {
-			this.testing = testing;
-		}
-
-		public int[][] getTraining() {
-			return training;
-		}
-
-		public void setTraining(int[][] training) {
-			this.training = training;
-		}
-
 		int[][] training;
 		
 		public Omega(int[] probs){
@@ -37,6 +23,10 @@ public class Omega{
 			data = tree.generateData();
 		}
 		
+		public Omega(int[][] wineData, int size){
+			this.wineData = wineData;
+			this.size = size;
+		}
 		public void populateData(){
 			data =  new int[2000][10];
 			Random rand = new Random();
@@ -199,4 +189,29 @@ public class Omega{
 			return prob;
 			
 		}
+		
+		public int[][] getWineData() {
+			return wineData;
+		}
+
+		public void setWineData(int[][] wineData) {
+			this.wineData = wineData;
+		}
+		
+		public int[][] getTesting() {
+			return testing;
+		}
+
+		public void setTesting(int[][] testing) {
+			this.testing = testing;
+		}
+
+		public int[][] getTraining() {
+			return training;
+		}
+
+		public void setTraining(int[][] training) {
+			this.training = training;
+		}
+
 	}

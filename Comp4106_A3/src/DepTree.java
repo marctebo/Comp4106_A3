@@ -23,16 +23,16 @@ public class DepTree {
 		tree.get(9).setParent(tree.get(5));
 	}
 	
-	public DepTree(double[][] arr){
+	public DepTree(double[][] arr, int size){
 		int iLoc, jLoc;
 		tree = new ArrayList<>();
 		System.out.print("\nOrder of Connections");
-		while(tree.size()<10){
+		while(tree.size()<size){
 			iLoc = 0;
 			jLoc = 0;
 			double max = 0;
-			for(int i = 0; i<10;i++){
-				for(int j=i+1;j<10;j++){
+			for(int i = 0; i<size;i++){
+				for(int j=i+1;j<size;j++){
 					if(arr[i][j]>max){
 						max = arr[i][j];
 						iLoc = i;
@@ -76,10 +76,24 @@ public class DepTree {
 				tree.add(b);
 			}
 			else if(containsId(a.getId()) && containsId(b.getId())){
-				if(!getNodeId(a.getId()).connectedTo(b.getId(),0)){
-					getNodeId(a.getId()).addPair(getNodeId(b.getId()));
+				DepNode temp1 = getNodeId(a.getId());
+				DepNode temp2 = getNodeId(b.getId());
+				if(!temp1.connectedTo(temp2.getId(),0)){
+					temp1.addPair(temp2);
 					System.out.println(a.getId() + " added pair: " + b.getId());
-					getNodeId(a.getId()).addChild(getNodeId(b.getId()));
+					/*if(temp1.connectedTo(root.getId(), 0)){
+						temp1.addChild(temp2);
+						if(temp2.getPairs().size()>1){
+							temp2.addChild(temp2.getPairs().get(0));
+						}
+					}
+					else if(temp2.connectedTo(root.getId(), 0)){
+						temp2.addChild(temp1);
+						if(temp1.getPairs().size()>1){
+							temp1.addChild(temp1.getPairs().get(0));
+						}
+					}*/
+					temp1.addChild(temp2);
 					if(getNodeId(b.getId()).getPairs().size()>1){
 						getNodeId(b.getId()).addChild(getNodeId(b.getId()).getPairs().get(0));
 					}
@@ -167,9 +181,51 @@ public class DepTree {
 			}
 		}
 		System.out.println();
-		return new DepTree(vals);
+		return new DepTree(vals,10);
 	}
 	
+	public static DepTree generateWineDepTree(int[][] data){
+		double numI,numJ,numIJ;
+		double prIJ,prI,prJ;
+		double total;
+		double[][] vals = new double[14][14];
+		System.out.println("\nStrengths between Nodes");
+		for(int i = 1; i<14;i++){
+			System.out.print("-------- ");
+			for(int j = i+1; j< 14; j++){
+				total= 0.0;
+				for(int k = 0;k<2;k++){
+					for(int l = 0;l<2;l++){
+						numI = numJ = numIJ = 0;
+						for(int m = 0;m<178;m++){
+							if(data[m][i] == k){
+								numI++;
+							}
+							else if(data[m][j] == l){
+								numJ++;
+							}
+							if(data[m][i] == k && data[m][j] == l){
+								numIJ++;
+							}
+						}
+						prI = numI/178;
+						prJ = numJ/178;
+						prIJ = numIJ/178;	
+						total+=prIJ*Math.log10(prIJ/(prI*prJ));
+					}
+				}
+				vals[i][j] = total;
+				DecimalFormat two = new DecimalFormat("0.000");
+				System.out.print(two.format(vals[i][j])+ "|" + i + j + " ");
+			}
+			System.out.println();
+			for(int z=0;z<=i;z++){
+				System.out.print("-------- ");
+			}
+		}
+		System.out.println();
+		return new DepTree(vals,14);
+	}
 	public boolean containsId(int id){
 		for(DepNode node: tree){
 			if(node.getId() == id){
