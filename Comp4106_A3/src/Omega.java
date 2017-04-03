@@ -7,7 +7,7 @@ public class Omega{
 		int[] p0,p1;
 		int[][] data;
 		int[][] wineData;
-		int size;
+		int size,inc;
 		DepTree tree;
 		int[][] testing;
 		int[][] training;
@@ -23,9 +23,10 @@ public class Omega{
 			data = tree.generateData();
 		}
 		
-		public Omega(int[][] wineData, int size){
+		public Omega(int[][] wineData, int size,int inc){
 			this.wineData = wineData;
 			this.size = size;
+			this.inc = inc;
 		}
 		public void populateData(){
 			data =  new int[2000][10];
@@ -137,17 +138,52 @@ public class Omega{
 				for(int j=0;j<10;j++){
 					if(i<foldStart[fold]){
 						training[i][j] = data[i][j];
-						}
-						else if(i>= foldStart[fold] && i< foldStart[fold+1]){
-							testing[i-(foldStart[fold])][j] = data[i][j];
-						}
-						else if(i>foldStart[fold+1]){
-							getTraining()[i-foldStart[1]][j] = data[i][j];
-						}
+					}
+					else if(i>= foldStart[fold] && i< foldStart[fold+1]){
+						testing[i-(foldStart[fold])][j] = data[i][j];
+					}
+					else if(i>foldStart[fold+1]){
+						getTraining()[i-foldStart[1]][j] = data[i][j];
 					}
 				}
 			}
+		}
 			
+		public void generateWineTT(int[] foldStart, int fold, int max){
+			testing = new int[inc][14];
+			training = new int[max-inc+1][14];
+			
+
+			for(int i=0;i<size;i++){
+				for(int j=0;j<14;j++){
+					if(i<foldStart[fold]){
+						training[i][j] = wineData[i][j];
+					}
+					else if(i>= foldStart[fold] && i< foldStart[fold+1]){
+						testing[i-(foldStart[fold])][j] = wineData[i][j];
+					}
+					else if(i>foldStart[fold+1]){
+						getTraining()[i-inc][j] = wineData[i][j];
+					}
+					
+				}
+			}
+		}
+		public double[] countWineTraining(){
+			int[] totals = new int[14];
+			for(int j = 0;j<14;j++){
+				for(int i=0;i<size-inc;i++){
+					if(training[i][j]==0){
+						totals[j]++;
+					}
+				}
+			}
+			double[] per = new double[14];
+			for(int i=0;i<10;i++){
+				per[i] = totals[i]/((size-inc)*1.0);
+			}
+			return per;
+		}
 		public double[][] countTrainingDependent(DepTree tree){
 			double[][] prob = new double[2][10];
 			int count;

@@ -93,9 +93,10 @@ public class DepTree {
 							temp1.addChild(temp1.getPairs().get(0));
 						}
 					}*/
+					//if(temp2.getParent()!=null){}
 					temp1.addChild(temp2);
-					if(getNodeId(b.getId()).getPairs().size()>1){
-						getNodeId(b.getId()).addChild(getNodeId(b.getId()).getPairs().get(0));
+					if(temp2.getPairs().size()>1){
+						temp2.addChild(temp2.getPairs().get(0));
 					}
 				}
 			}
@@ -109,6 +110,11 @@ public class DepTree {
 		System.out.println("DEPENDENCY TREE");
 
 		for(DepNode d: tree){
+//			for(DepNode c: d.getChildren()){
+//				if(c.getChildren().contains(d)){
+//					c.getChildren().remove(d);
+//				}
+//			}
 			System.out.print("Node "+ d.getId() + " children: ");
 			for(DepNode c: d.getChildren()){
 				System.out.print(c.getId() + " ");

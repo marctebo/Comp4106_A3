@@ -52,6 +52,10 @@ public class DepNode {
 	}
 
 	public void addChild(DepNode node){
+//		if(node.getParent()!=null&&!node.getParent().equals(this)){
+//			this.setParent(node);
+//			node.addChild(this);
+//		}
 		if(!node.equals(parent)&&!node.isRoot()){
 			children.add(node);
 			node.setParent(this);
