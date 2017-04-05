@@ -342,7 +342,7 @@ public class DataGeneration {
 						sum++;
 					}
 				}
-				rollingAverage+=sum/(1.0*(o.size-o.inc));
+				rollingAverage+=sum/(1.0*(o.inc));
 				count++;
 			}
 			averages[fold] = rollingAverage/3.0;
