@@ -484,14 +484,6 @@ public class DataGeneration {
 		DepTree wineTree = DepTree.generateWineDepTree(totalData);
 		calibrateTree(wineTree);
 		
-		
-		for(int i=0;i<178;i++){
-			for(int j=0;j<14;j++){
-				System.out.print(totalData[i][j] + " ");
-			}
-			System.out.println();
-		}
-		
 		crossValidationIndependentWine(wineClasses);
 		crossValidationDependentWine(wineClasses,wineTree);
 		//w1.generateDepTree();
